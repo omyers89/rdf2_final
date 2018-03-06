@@ -4,12 +4,12 @@ from string import rsplit, strip, split
 import csv
 import codecs
 import exceptions
-
 import nltk
 
 DEBUG = False
 
-def LOG (prow):
+
+def LOG(prow):
     if DEBUG:
         print prow
 
@@ -19,12 +19,30 @@ prop = r'([A-Za-z])+'
 year = r'^(.*)[0-9][0-9][0-9][0-9](.*)$'
 date = r'[A-Z][a-z]+ [0-9][0-9], [0-9][0-9][0-9][0-9]'
 
-months = ['january', 'february', 'march',  'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november',
+          'december']
 
+#year - 4 digits
+#sec - first, second..
+time_prep = [
+    "on",
+    "in",
+    "at",
+    "since",
+    "for",
+    "ago",
+    "before",
+    "to",
+    "past",
+    "from",
+    "till",
+    "until",
+    "by",
+    year,
+    "sec"
+]
 
-
-
-class TableParser(HTMLParser):
+class TimeParser(HTMLParser):
     def __init__(self, dataKeyword, nms):
         HTMLParser.__init__(self)
         self.in_table = False
@@ -33,13 +51,13 @@ class TableParser(HTMLParser):
         self.dataAttr = dataKeyword
         self.related_objs = nms
 
-        self.re_obj = re.compile(r"^(.*)" + dataKeyword + "(.*)$",re.I)
-        self.re_year = re.compile(r"^(.*)" + year + "(.*)$",re.I)
+        self.re_obj = re.compile(r"^(.*)" + dataKeyword + "(.*)$", re.I)
+        self.re_year = re.compile(r"^(.*)" + year + "(.*)$", re.I)
         self.in_td_string = ""
         self.res_dict = {}
         self.curr_v = ""
         self.curr_v_tag = ""
-        self.br_last = False #to mark that we passed new potetial related object
+        self.br_last = False  # to mark that we passed new potetial related object
 
     def handle_starttag(self, tag, attrs):
         try:
@@ -53,10 +71,9 @@ class TableParser(HTMLParser):
                 if tag == 'br':
                     self.br_last = True
                     return
-                for (k,v) in attrs:
+                for (k, v) in attrs:
                     if k == 'title':
                         if re.match(prop, v):
-
 
                             self.in_td_string += ("\n " + v + " -- from tag --  : ")
                             if v in self.related_objs:
@@ -64,7 +81,7 @@ class TableParser(HTMLParser):
                                 self.curr_v = v
                                 self.curr_v_tag = tag
                             return
-                        splitted = rsplit(v,"\\| |,|;|-")
+                        splitted = rsplit(v, "\\| |,|;|-")
                         for s in splitted:
                             if re.match(year, s) or (s in months) or self.re_year.match(v):
                                 self.in_td_string += v + "-- from tag -- "
@@ -73,24 +90,22 @@ class TableParser(HTMLParser):
             print "in handle_starttag"
             print e
 
-
-
-
     def handle_data(self, data):
         try:
-            if self.in_table :
+            if self.in_table:
                 if self.in_data and data != "":
-                    #splitted = rsplit(data,"\,\.-\(\)")
+                    # splitted = rsplit(data,"\,\.-\(\)")
                     datan = data
                     if "(" in datan:
                         datan = filter(None, re.split("[\(]+", datan))[0]
                     splitted = filter(None, re.split("[,\-!?:\(\)]+", datan))
                     nums = re.findall(r'\d+', data)
                     for s in splitted:
-                        ccv = strip(s,'" \n')
-                        ccv = strip(ccv,'" ')
+                        ccv = strip(s, '" \n')
+                        ccv = strip(ccv, '" ')
                         if re.match(name, ccv):
-                            if (ccv not  in  self.res_dict and self.curr_v_tag == "") or (self.br_last and self.curr_v_tag == ""):
+                            if (ccv not in self.res_dict and self.curr_v_tag == "") or \
+                                    (self.br_last and self.curr_v_tag == ""):
                                 self.res_dict[ccv] = []
                                 self.curr_v = ccv
                                 self.br_last = False
@@ -109,7 +124,6 @@ class TableParser(HTMLParser):
             print "in handle_data"
             print e
 
-
     def handle_endtag(self, tag):
         try:
             if tag == 'table':
@@ -119,10 +133,22 @@ class TableParser(HTMLParser):
                 self.in_data = False
             if tag == 'td':
                 self.in_td = False
-                #LOG( self.in_td_string)
+                # LOG( self.in_td_string)
                 self.in_td_string = ""
             if tag == self.curr_v_tag:
                 self.curr_v_tag = ""
         except Exception as e:
             print "in handle_endtag"
             print e
+
+
+if __name__ == "__main__":
+    y = r"[0-9][0-9][0-9][0-9]"
+    re_year = re.compile(r"^(.*)" + year + "(.*)$", re.I)
+    if re.match(re_year, "199s7.bc"):
+        print "match"
+    else:
+        print "no match"
+
+    text = nltk.word_tokenize("And now for something completely different")
+    print nltk.pos_tag(text)

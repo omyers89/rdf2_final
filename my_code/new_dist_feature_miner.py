@@ -1,4 +1,5 @@
 import csv
+import re
 
 from miner_base import *
 from string import rsplit
@@ -37,7 +38,6 @@ class NewDistFeatureMiner(MinerBase):
                                    "http://dbpedia.org/ontology/Film":0,
                                    "http://dbpedia.org/ontology/Event":0,
                                    "http://dbpedia.org/ontology/SocietalEvent":0,
-                                   "http://dbpedia.org/ontology/NaturalEvent":0,
                                    "http://dbpedia.org/ontology/Activity":0,
                                    "http://dbpedia.org/ontology/Place":0,
                                    "http://dbpedia.org/ontology/PopulatedPlace":0,
@@ -57,7 +57,6 @@ class NewDistFeatureMiner(MinerBase):
                                     "http://dbpedia.org/ontology/Film":0,
                                 "http://dbpedia.org/ontology/Event":0,
                                     "http://dbpedia.org/ontology/SocietalEvent":0,
-                                    "http://dbpedia.org/ontology/NaturalEvent":0,
                                 "http://dbpedia.org/ontology/Activity":0,
                                 "http://dbpedia.org/ontology/Place":0,
                                     "http://dbpedia.org/ontology/PopulatedPlace":0,
@@ -333,7 +332,6 @@ def print_features_to_csv(file_suffix="dbo"):
                       "http://dbpedia.org/ontology/Film",
                       "http://dbpedia.org/ontology/Event",
                       "http://dbpedia.org/ontology/SocietalEvent",
-                      "http://dbpedia.org/ontology/NaturalEvent",
                       "http://dbpedia.org/ontology/Activity",
                       "http://dbpedia.org/ontology/Place",
                       "http://dbpedia.org/ontology/PopulatedPlace",
@@ -357,15 +355,17 @@ def print_features_to_csv(file_suffix="dbo"):
 
 if __name__ == "__main__":
     # # this script will mine all features of all properties of person
-    if len(sys.argv) > 1:
-        quick_param = True
-    FM = NewDistFeatureMiner(DBPEDIA_URL_UP, 'person', "http://dbpedia.org/ontology/Person")
-    fd, missed = FM.mine_features(quick=quick_param)
-    if len(missed) > 0:
-        # try again:
-        fd, missed = FM.mine_features(quick=quick_param)
-
-    print "tried twice ps left:", missed
+    # if len(sys.argv) > 1:
+    #     quick_param = True
+    # FM = NewDistFeatureMiner(DBPEDIA_URL_UP, 'person', "http://dbpedia.org/ontology/Person")
+    # fd, missed = FM.mine_features(quick=quick_param)
+    # if len(missed) > 0:
+    #     # try again:
+    #     fd, missed = FM.mine_features(quick=quick_param)
+    #
+    # print "tried twice ps left:", missed
     print_features_to_csv()
     #features = FM.get_fetures_for_prop(False, "http://dbpedia.org/ontology/spouse", 200)
     #print_features_to_csv()
+
+    #time words:
