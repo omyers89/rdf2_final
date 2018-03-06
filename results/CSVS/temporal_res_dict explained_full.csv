@@ -1,0 +1,91 @@
+http://www.wikidata.org/prop/P512,academic  degree,0.00042537,44667,0
+http://www.wikidata.org/prop/P803,academic  position,0.27388535,157,1
+http://www.wikidata.org/prop/P812,academic major,0.03125,224,0
+http://www.wikidata.org/prop/P1416,affiliation ,0.053580629,5823,1
+http://www.wikidata.org/prop/P598,comander of,0.073593074,5082,1
+http://www.wikidata.org/prop/P1399,convicted of,0.000468713,4267,0
+http://www.wikidata.org/prop/P2632,detention,0.04074357,3927,1
+http://www.wikidata.org/prop/P768,electoral district,0.211267606,142,1
+http://www.wikidata.org/prop/P734,family name ,0.000136616,527025,0
+http://www.wikidata.org/prop/P969,http://dbpedia.org/ontology/address,0.051282051,39,1
+http://www.wikidata.org/prop/P742,http://dbpedia.org/ontology/alias,0.001837391,13062,0
+http://www.wikidata.org/prop/P166,http://dbpedia.org/ontology/award,0.000401732,679558,0
+http://www.wikidata.org/prop/P607,http://dbpedia.org/ontology/battle,0.0026162,106261,0
+http://www.wikidata.org/prop/P1477,http://dbpedia.org/ontology/birthName,4.85E-05,41233,0
+http://www.wikidata.org/prop/P19,http://dbpedia.org/ontology/birthPlace,5.56E-07,1798893,0
+http://www.wikidata.org/prop/P569,http://dbpedia.org/ontology/birthYear,3.00E-06,2996641,0
+http://www.wikidata.org/prop/P169,http://dbpedia.org/ontology/ceo,0.134328358,67,1
+http://www.wikidata.org/prop/P27,http://dbpedia.org/ontology/citizenship,0.00036996,2454318,0
+http://www.wikidata.org/prop/P94,http://dbpedia.org/ontology/coatOfArms,0.000394711,5067,0
+http://www.wikidata.org/prop/P570,http://dbpedia.org/ontology/deathDate,3.30E-06,1513396,0
+http://www.wikidata.org/prop/P20,http://dbpedia.org/ontology/deathPlace,1.47E-06,679250,0
+http://www.wikidata.org/prop/P57,http://dbpedia.org/ontology/director,0.086206897,58,1
+http://www.wikidata.org/prop/P101,http://dbpedia.org/ontology/discipline,0.000835771,47860,0
+http://www.wikidata.org/prop/P184,http://dbpedia.org/ontology/doctoralAdvisor,0.000137334,14563,0
+http://www.wikidata.org/prop/P185,http://dbpedia.org/ontology/doctoralStudent,0.001185302,2531,0
+http://www.wikidata.org/prop/P98,http://dbpedia.org/ontology/editor,0.129411765,85,1
+http://www.wikidata.org/prop/P69,http://dbpedia.org/ontology/education,0.014365489,644670,1
+http://www.wikidata.org/prop/P108,http://dbpedia.org/ontology/employer,0.047325776,217091,1
+http://www.wikidata.org/prop/P112,http://dbpedia.org/ontology/founder,0.002857143,700,0
+http://www.wikidata.org/prop/P361,http://dbpedia.org/ontology/isPartOf,0.013912076,8985,1
+http://www.wikidata.org/prop/P118,http://dbpedia.org/ontology/league,0.000306297,16324,0
+http://www.wikidata.org/prop/P135,http://dbpedia.org/ontology/movement,0.00016721,11961,0
+http://www.wikidata.org/prop/P175,http://dbpedia.org/ontology/musicalArtist,0.008,125,0
+http://www.wikidata.org/prop/P127,http://dbpedia.org/ontology/owner,0.041666667,48,1
+http://www.wikidata.org/prop/P102,http://dbpedia.org/ontology/party,0.007220161,259551,1
+http://www.wikidata.org/prop/P119,http://dbpedia.org/ontology/placeOfBurial,0.002641634,84796,0
+http://www.wikidata.org/prop/P264,http://dbpedia.org/ontology/recordLabel,0.002838866,26419,0
+http://www.wikidata.org/prop/P140,http://dbpedia.org/ontology/religion,0.000841987,57008,0
+http://www.wikidata.org/prop/P263,http://dbpedia.org/ontology/residence,0.011904762,84,1
+http://www.wikidata.org/prop/P21,http://dbpedia.org/ontology/sex,1.94E-06,3608870,0
+http://www.wikidata.org/prop/P26,http://dbpedia.org/ontology/spouse,0.185193601,88016,1
+http://www.wikidata.org/prop/P161,http://dbpedia.org/ontology/starring,0.17721519,79,0
+http://www.wikidata.org/prop/P54,http://dbpedia.org/ontology/team,0.681934211,1159584,1
+http://www.wikidata.org/prop/P945,http://dbpedia.org/property/allegiance,0.005307051,3957,0
+http://www.wikidata.org/prop/P1532,http://dbpedia.org/property/country,0.000427643,11692,0
+http://www.wikidata.org/prop/P800,http://dbpedia.org/property/knownFor,0.001031712,36832,0
+http://www.wikidata.org/prop/P1412,http://dbpedia.org/property/language,1.60E-06,626125,0
+http://www.wikidata.org/prop/P53,http://dbpedia.org/property/nobleFamily,0.000102881,29160,0
+http://www.wikidata.org/prop/P1830,http://dbpedia.org/property/owner,0.094285714,700,1
+http://www.wikidata.org/prop/P1327,http://dbpedia.org/property/partner,0.014492754,3726,1
+http://www.wikidata.org/prop/P451,http://dbpedia.org/property/partner,0.20370854,3829,1
+http://www.wikidata.org/prop/P413,http://dbpedia.org/property/playerPositions,1.17E-05,256653,0
+http://www.wikidata.org/prop/P39,http://dbpedia.org/property/position,0.248324972,479992,1
+http://www.wikidata.org/prop/P410,http://dbpedia.org/property/rank,0.006332055,51642,0
+http://www.wikidata.org/prop/P1038,http://dbpedia.org/property/relatives,0.001370098,11678,0
+http://www.wikidata.org/prop/P611,http://dbpedia.org/property/religion,0.000999112,9008,0
+http://www.wikidata.org/prop/P551,http://dbpedia.org/property/residence,0.035282997,42315,1
+http://www.wikidata.org/prop/P276,location of the item,0.013888889,72,1
+http://www.wikidata.org/prop/P1037,manager(the person that manage),0.273333333,150,1
+http://www.wikidata.org/prop/P241,military branch,0.015411963,52881,1
+http://www.wikidata.org/prop/P3091,mount- the horse that a perso ride,0.006734007,297,0
+http://www.wikidata.org/prop/P97,noble title,0.114114114,9990,1
+http://www.wikidata.org/prop/P1411,nominated for,8.47E-05,35418,0
+http://www.wikidata.org/prop/P1962,patron ,0.012958963,463,1
+http://www.wikidata.org/prop/P123,publiser,0.006993007,143,0
+http://www.wikidata.org/prop/P1000,record (sports),0.244897959,49,1
+http://www.wikidata.org/prop/P1268,represents,0.038095238,105,1
+http://www.wikidata.org/prop/P859,sponser ,0.006745363,593,0
+http://www.wikidata.org/prop/P1066,student of,0.005163713,17042,0
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,

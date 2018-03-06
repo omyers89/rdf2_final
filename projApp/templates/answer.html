@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+<body>
+{% if is_temporal_t == "True" %}
+<h2>The property is <b>Temporal</b>, with probability: {{proba}} </h2>
+{% if relevant_t == "True" %}
+    <h2>and it is the most relevant</h2>
+{% else %}
+    <h2>and it is <u>NOT</u> the most relevant</h2>
+    <h2>The most relevant object is: {{ value_t }}</h2>
+{% endif %}
+
+{% else %}
+<h2>The property is <b>Eternal</b>, with probability: {{proba}}</h2>
+{% if relevant_t == "True" %}
+    <h2>and the fact holds</h2>
+{% else %}
+    <h2>and it is <u>NOT</u> correct</h2>
+    <h2>The correct object is: {{ value_t }}</h2>
+{% endif %}
+{% endif %}
+</body>
+{% endblock %}
