@@ -1,55 +1,77 @@
 from json import JSONEncoder
+from string import rsplit
 
+import exceptions
+
+from SPARQLWrapper import SPARQLWrapper, JSON
+
+from my_code.miner_base import MinerBase
+
+DBPEDIA_URL_UP = "http://dbpedia.org/sparql"
 class GraphObjectEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
 subjectsPerson = {'person': "http://dbpedia.org/ontology/Person"}
-                          #'politician': "http://dbpedia.org/ontology/Politician",
-                          #'soccer_player': "http://dbpedia.org/ontology/SoccerPlayer"}
-                          # 'baseball_players': "http://dbpedia.org/ontology/BaseballPlayer",
-                          # 'comedian': "http://dbpedia.org/ontology/Comedian",
-                          # "Company": "http://dbpedia.org/ontology/Company",
-                          #   "BasketballPlayer": "http://dbpedia.org/ontology/BasketballPlayer",
-                          # "EducationalInstitution": "http://dbpedia.org/ontology/EducationalInstitution"}
+
+def get_subj_from_uri( uri_strin):
+    subj = rsplit(uri_strin, "/")[-1]
+    return subj
 
 
-subjectsPlaces = {#'Place': "http://dbpedia.org/ontology/Place",
-                  'NaturalPlace': "http://dbpedia.org/ontology/NaturalPlace",
-                  'HistoricPlace': "http://dbpedia.org/ontology/HistoricPlace",
-                  'CelestialBody': "http://dbpedia.org/ontology/CelestialBody",
-                  'architectural_structure': "http://dbpedia.org/ontology/ArchitecturalStructure"}
+def get_related_objects_from_uri(subj_uri, prop_uri):
+    mm = MinerBase(DBPEDIA_URL_UP)
+    try:
+        list_of_related_objects = mm.get_objects_WT_for_s_p(prop_uri, subj_uri)
+        if len(list_of_related_objects) == 0:
+            list_of_related_objects = mm.get_objects_NT_for_s_p(prop_uri, subj_uri)
+            if len(list_of_related_objects) == 0:
+                ont_prop = "http://dbpedia.org/ontology/" + get_subj_from_uri(prop_uri)
+                list_of_related_objects = mm.get_objects_WT_for_s_p(ont_prop, subj_uri)
+                if len(list_of_related_objects) == 0:
+                    list_of_related_objects = mm.get_objects_NT_for_s_p(ont_prop, subj_uri)
+    except exceptions.Exception:
+        print "sparql error... "
+        return []
+    names_ = [get_subj_from_uri(x) for x in list_of_related_objects]
+    names = [n.replace('_', ' ') for n in names_]
+    return list_of_related_objects, names
 
-subjectsLive = {#'Animal': "http://dbpedia.org/ontology/Animal",
-                'Plant': "http://dbpedia.org/ontology/Plant",
-                'Insect': "http://dbpedia.org/ontology/Insect",
-                'Fish': "http://dbpedia.org/ontology/Fish",
-                "BasketballPlayer": "http://dbpedia.org/ontology/BasketballPlayer",
-                #'person': "http://dbpedia.org/ontology/Person"}
-                #'Mammal': "http://dbpedia.org/ontology/Mammal",
-                #'Play': "http://dbpedia.org/ontology/Play"
-                }
+def get_lable_for_obj(ouri):
+    local_sprql = SPARQLWrapper(DBPEDIA_URL_UP)
+    ouriu = ouri.encode('utf-8')
+    l_list = []
+    query_text = ("""
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT distinct ?l  WHERE {
+                    <%s> rdfs:label ?l . 
+                    FILTER (langMatches( lang(?l), "en" )).
+                } """ % ouriu)
+    local_sprql.setQuery(query_text)
+    local_sprql.setReturnFormat(JSON)
+    results_inner = local_sprql.query().convert()
+    for inner_res in results_inner["results"]["bindings"]:
+        # s = inner_res["s"]["value"]
+        l = inner_res["l"]["value"]
+        l_list.append(l)
 
-dictionaries = [subjectsPerson, subjectsPlaces, subjectsLive]
+    return l_list
 
-
-
-dictionariest = [subjectsPerson]
-
-# {  #"Company": "http://dbpedia.org/ontology/Company",
-#                     #'comedian': "http://dbpedia.org/ontology/Comedian",
-#                     'Mammal': "http://dbpedia.org/ontology/Mammal",
-#                     #'Fish': "http://dbpedia.org/ontology/Fish",
-#                     #"EducationalInstitution": "http://dbpedia.org/ontology/EducationalInstitution",
-#                     'politician': "http://dbpedia.org/ontology/Politician",
-#                     'architectural_structure': "http://dbpedia.org/ontology/ArchitecturalStructure",
-#                     #'person': "http://dbpedia.org/ontology/Person",
-#                     #'baseball_players': "http://dbpedia.org/ontology/BaseballPlayer",
-#                     "BasketballPlayer": "http://dbpedia.org/ontology/BasketballPlayer"},
-#                     {'person': "http://dbpedia.org/ontology/Person"}]
-
-dictionariesq = [{'comedian': "http://dbpedia.org/ontology/Comedian",
-                  "EducationalInstitution": "http://dbpedia.org/ontology/EducationalInstitution",
-                    'Play': "http://dbpedia.org/ontology/Play"}]
+# def LOG(prow):
+#     log_file_name = "../results/log.txt"
+#     with open(log_file_name, "a") as myfile:
+#         myfile.write(str(prow)  + "\n")
 
 
+def make_unicode(inp):
+    if type(inp) != unicode:
+        inp =  inp.decode('utf-8')
+        return inp
+    else:
+        return inp
+
+
+if __name__ == "__main__":
+    listt = get_lable_for_obj("http://dbpedia.org/resource/Donald_Trump")
+    for l in listt:
+        print l
