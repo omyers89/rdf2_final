@@ -6,7 +6,7 @@ import csv
 import codecs
 import exceptions
 import nltk
-from my_code.Utils import *
+from Utils import *
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 DEBUG = False
@@ -73,7 +73,7 @@ def get_comment_for_prop(prop_uri):
         # s = inner_res["s"]["value"]
         c = inner_res["c"]["value"]
         r_list.append(c)
-    print r_list
+    #print r_list
     return r_list
 
 
@@ -94,10 +94,16 @@ def get_comment_keyword(prop_uri):
     for cm in comm_list:
         text = nltk.word_tokenize(cm)
         tags = nltk.pos_tag(text)
+
         for w,t in tags:
             if t in ['VBD','NNS', 'VBN','NN']:
-                wl = WordNetLemmatizer().lemmatize(w)
-                candidates.append(wl)
+                try:
+                    wl = WordNetLemmatizer().lemmatize(w)
+                    candidates.append(wl)
+                except Exception as e:
+                    print e
+                    print "**********************" , w ,"*******************"
+
     return candidates
 
 
@@ -105,6 +111,24 @@ def get_wiki_redirects_normal(wiki_reds):
     normal_objs = [o.replace('_', ' ') for o in wiki_reds]
     return normal_objs
 
+
+def remove_parent(red):
+    sep = '('
+    tmp_pred = red.split(sep, 1)[0]
+    tmp_pred = tmp_pred.replace('_', ' ')
+    tmp_pred = tmp_pred.replace('*', '')
+    return tmp_pred
+
+def fix_all_redirects(all_reds_list):
+    '''
+    remove parerts and word inside. also removes all *
+    :param all_reds_list:
+    :return:
+    '''
+    tmp_rd_list = []
+    for rd in all_reds_list:
+        tmp_rd_list.append(remove_parent(rd))
+    return tmp_rd_list
 
 def get_key_words(subj_uri, prop_uri):
     objects_uris, normal_names = get_related_objects_from_uri(subj_uri, prop_uri)
@@ -115,21 +139,25 @@ def get_key_words(subj_uri, prop_uri):
     prop_comment = get_comment_keyword(prop_uri)
     all_keyword_list = list(set(normal_names+obj_labels+prop_name+prop_comment))
     all_reds_list = list(set(wiki_reds+wiki_reds_normal))
-    return all_keyword_list,all_reds_list
+    striped_all_reds = fix_all_redirects(all_reds_list)
+    striped_all_keywords = fix_all_redirects(all_keyword_list)
+    return striped_all_keywords,striped_all_reds
 
 def get_time_prep_dict_for_sp(subj_uri, prop_uri):
     subj = get_subj_from_uri(subj_uri)
     urls = "https://en.wikipedia.org/wiki/" + subj
     response = urllib.urlopen(urls).read()
+    all_keywrds, all_redirects = get_key_words(subj_uri, prop_uri)
+    LOG(["all_keywords:", all_keywrds, "all_redirects: ", all_redirects])
+    tp = TimeParser([], [])
     try:
-        all_keywrds, all_redirects = get_key_words(subj_uri, prop_uri)
-        LOG(["all_keywords:", all_keywrds, "all_redirects: ", all_redirects])
         tp = TimeParser(all_keywrds, all_redirects)
         part_string = make_unicode(response)
         tp.feed(part_string)
     except Exception as e:
-        LOG(e)
-        LOG(subj)
+        print "###################### e is:", e
+        print "###################### subj is:", subj
+        print "###################### red is:", all_redirects
     return tp.res_dict
 
 class TimeParser(HTMLParser):
@@ -170,17 +198,17 @@ class TimeParser(HTMLParser):
         for k in self.res_dict:
             if k == "year":
                 if self.year_re.match(val):
-                    self.res_dict[k] = self.res_dict[k]+1
+                    self.res_dict[k] = 1
                     return
             elif k=="sec":
                 for re_sec in self.sec_words:
                     if re_sec.match(val):
-                        self.res_dict[k] = self.res_dict[k]+1
+                        self.res_dict[k] = 1
                         return
             else:
                 kws = " " + k + " "
                 if kws in val.lower():
-                    self.res_dict[k] = self.res_dict[k] + 1
+                    self.res_dict[k] = 1
                     return
 
 

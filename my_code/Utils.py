@@ -5,7 +5,7 @@ import exceptions
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-from my_code.miner_base import MinerBase
+from miner_base import MinerBase
 
 DBPEDIA_URL_UP = "http://dbpedia.org/sparql"
 class GraphObjectEncoder(JSONEncoder):

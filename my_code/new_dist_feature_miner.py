@@ -5,7 +5,7 @@ from miner_base import *
 from string import rsplit
 from threading import Lock, Thread
 import sys
-
+from time_parser import get_time_prep_dict_for_sp
 DBPEDIA_URL_UP = "http://dbpedia.org/sparql"
 DEBUG = False
 quick_param = False
@@ -64,6 +64,40 @@ class NewDistFeatureMiner(MinerBase):
                                     "http://dbpedia.org/ontology/ArchitecturalStructure":0,
                                     "http://dbpedia.org/ontology/NaturalPlace":0}
 
+        self.pred_dict_init = {
+            "on": 0,
+            "in": 0,
+            "at": 0,
+            "since": 0,
+            "for": 0,
+            "ago": 0,
+            "before": 0,
+            "to": 0,
+            "past": 0,
+            "from": 0,
+            "till": 0,
+            "until": 0,
+            "by": 0,
+            "year": 0,
+            "sec": 0
+        }
+        self.pred_dict_counters = {
+            "on": 0,
+            "in": 0,
+            "at": 0,
+            "since": 0,
+            "for": 0,
+            "ago": 0,
+            "before": 0,
+            "to": 0,
+            "past": 0,
+            "from": 0,
+            "till": 0,
+            "until": 0,
+            "by": 0,
+            "year": 0,
+            "sec": 0
+        }
     def mine_features(self, quick):
         # CHECKED !
         s_dict_file = open("../dumps/p_top_s_dict_" + self.file_suffix +".dump", 'r')
@@ -94,6 +128,50 @@ class NewDistFeatureMiner(MinerBase):
                 continue
             try:
                 feature_dictionary[p] = self.get_fetures_for_prop(quick, p, s_dicts)
+            except:
+                missed_ps.append(p)
+
+            sys.stdout.write("\b p #{} done".format(p_indx))
+            sys.stdout.write("\r")
+            sys.stdout.flush()
+            p_indx += 1
+
+            dump_name = "../dumps/prop_features_" + self.file_suffix +".dump"
+            r_dict_file = open(dump_name, 'w')
+            pickle.dump(feature_dictionary, r_dict_file)
+            r_dict_file.close()
+
+            if quick and p_indx > 2:
+                break
+        return feature_dictionary, missed_ps
+
+
+    def mine_features_nlp(self, quick):
+        # CHECKED !
+        s_dict_file = open("../dumps/p_top_s_dict_" + "dbo" +".dump", 'r')
+        p_top_s_dict = pickle.load(s_dict_file)
+        s_dict_file.close()
+
+        dump_name = "../dumps/prop_features_" + self.file_suffix +".dump"
+        if not os.path.exists(dump_name):
+            feature_dictionary = {}
+        else:
+            r_dict_file = open(dump_name, 'r')
+            feature_dictionary = pickle.load(r_dict_file)
+            r_dict_file.close()
+
+        p_filtered_dict = self.load_filtered_props()
+
+        p_indx = 0
+        missed_ps = []
+        for p, s_dicts in p_top_s_dict.items():
+            if (p in feature_dictionary) or (p not in p_filtered_dict and not FULL) or p =="http://dbpedia.org/ontology/wikiPageWikiLink" :
+                print p , " - skipped"
+                continue
+            if DEBUG and not (p == "http://dbpedia.org/ontology/birthPlace" or p =="http://dbpedia.org/ontology/spouse"):
+                continue
+            try:
+                feature_dictionary[p] = self.get_nlp_fetures_for_prop(quick, p, s_dicts)
             except:
                 missed_ps.append(p)
 
@@ -310,6 +388,65 @@ class NewDistFeatureMiner(MinerBase):
 
         return top_s_dict
 
+    def get_nlp_fetures_for_prop(self, quick, prop_uri, s_dict, nx=-1):
+        # CHECKED !
+        print "mining features for {}".format(prop_uri)
+        max_s_iter = 1000 if nx == -1 else nx
+        self.p_count = 0
+        self.p_only_one_counter = 0
+        self.p_multy_objs_same_type_counter = 0
+        self.p_objs_unique_type_counter = 0
+        self.p_has_primitive_type = 0
+        self.pred_dict_counters = self.pred_dict_init.copy()
+        thread_dict = {}
+        j = 0
+        for i, s in enumerate(s_dict):
+            j += 1
+            t = Thread(target=self.update_counter_pred, args=(prop_uri, s,))
+            thread_dict[i] = t
+            t.start()
+
+            if DEBUG:
+                txt = "\b S loop progress: {}".format(i)
+                sys.stdout.write(txt)
+                sys.stdout.write("\r")
+                sys.stdout.flush()
+            if j > 10:
+                for ih, th in thread_dict.items():
+                    th.join()
+                thread_dict = {}
+                j = 0
+                if DEBUG:
+                    print "flushed:"
+                    print self.p_count, ";", self.pred_dict_counters
+                if self.p_count >= max_s_iter:
+                    break
+            if quick and i > 100:
+                break
+        for ih, th in thread_dict.items():
+            th.join()
+
+        feature_dict = {"p_count": self.p_count}
+
+        feature_dict["pred_dict_counters"] = self.pred_dict_counters.copy()
+        print "final"
+        print self.p_count, ";", self.pred_dict_counters
+        return feature_dict
+
+    def update_counter_pred(self, prop_uri, s):
+        temp_red_res = get_time_prep_dict_for_sp(s,prop_uri)
+        p_count = 1
+        self.atomic_pred_counter_inc(p_count, temp_red_res)
+
+    def atomic_pred_counter_inc(self, p_count, temp_red_res):
+        global f_lock
+        f_lock.acquire()
+        self.p_count += p_count
+
+        for k, v in temp_red_res.items():
+            self.pred_dict_counters[k] += v
+        f_lock.release()
+
 
 def print_features_to_csv(file_suffix="dbo"):
     diff_dump_name = "../dumps/prop_features_" + file_suffix +".dump"
@@ -354,17 +491,17 @@ def print_features_to_csv(file_suffix="dbo"):
     csvfile2.close()
 
 if __name__ == "__main__":
-    # # this script will mine all features of all properties of person
-    # if len(sys.argv) > 1:
-    #     quick_param = True
-    # FM = NewDistFeatureMiner(DBPEDIA_URL_UP, 'person', "http://dbpedia.org/ontology/Person")
-    # fd, missed = FM.mine_features(quick=quick_param)
-    # if len(missed) > 0:
-    #     # try again:
-    #     fd, missed = FM.mine_features(quick=quick_param)
-    #
-    # print "tried twice ps left:", missed
-    print_features_to_csv()
+    # this script will mine all features of all properties of person
+    if len(sys.argv) > 1:
+        quick_param = True
+    FM = NewDistFeatureMiner(DBPEDIA_URL_UP, 'person', "http://dbpedia.org/ontology/Person",file_suff="pred")
+    fd, missed = FM.mine_features_nlp(quick=quick_param)
+    if len(missed) > 0:
+        # try again:
+        fd, missed = FM.mine_features(quick=quick_param)
+
+    print "tried twice ps left:", missed
+    #print_features_to_csv()
     #features = FM.get_fetures_for_prop(False, "http://dbpedia.org/ontology/spouse", 200)
     #print_features_to_csv()
 
