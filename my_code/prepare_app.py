@@ -6,12 +6,13 @@ DBPEDIA_URL_UP = "http://dbpedia.org/sparql"
 
 """
 TODO:
-1. check if dumps exists
-2. if not run complete dumps.
-3. check if related objects exists 
-4. print 10 examples of subjects and related objects for props
-5. *** check with wikidata for properties that has some hints for being temporal: start time.
-
+1. prepare training data and dump it.
+    training data:
+    a. take filtered list from csv.
+    b. merge all relevant features by feature dictionary
+2. make function that create model with one feature family out.
+3. CV with 70/30 or 80/20
+4. print stats and confusion matrix.
 """
 
 def get_subj_objs_for_prop():
@@ -49,7 +50,32 @@ def get_subj_objs_for_prop():
                 break
     csvfile1.close()
 
+def get_classified_prop_dict(file_suffix="dbo"):
+    classified_properies_dict = {}
+    full_path = os.path.realpath(__file__)
+    path, filename = os.path.split(full_path)
+    all_path = os.path.join(path, '../results/CSVS/all_features_' + file_suffix + '.csv')
+    with open(all_path, mode='r') as infile:
+        reader = csv.reader(infile)
+        for row in reader:
+            if "tag" in row:
+                continue
+            #prob = float(row[1])
+            tag = int(row[1])
+            if tag == -1:
+                continue
+            if row[0] == "-1" :
+                break
+            seg = 1
+            classified_properies_dict[row[0]] = {'seg': seg, 'class': tag, 'obj_sat_f': {}, 'obj_type_f':{}, 'time_prep_f':{}}
+    return classified_properies_dict
 
+
+
+
+
+def make_training_data():
+    classified_properies_dict = get_classified_prop_dict()
 
 
 if __name__ == '__main__':
