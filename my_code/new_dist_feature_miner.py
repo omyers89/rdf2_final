@@ -27,12 +27,12 @@ class NewDistFeatureMiner(MinerBase):
         self.p_has_primitive_type = 0
         self.file_suffix = file_suff
         self.feature_types_init = {"http://dbpedia.org/ontology/Person":0,
-                               "http://dbpedia.org/ontology/Organisation":0,
+                                    "http://dbpedia.org/ontology/Organisation":0,
                                     "http://dbpedia.org/ontology/Company":0,
                                     "http://dbpedia.org/ontology/SportsTeam":0,
                                     "http://dbpedia.org/ontology/EducationalInstitution":0,
                                     "http://dbpedia.org/ontology/PoliticalParty":0,
-                                "http://dbpedia.org/ontology/Work":0,
+                                    "http://dbpedia.org/ontology/Work":0,
                                    "http://dbpedia.org/ontology/Document":0,
                                    "http://dbpedia.org/ontology/MusicalWork":0,
                                    "http://dbpedia.org/ontology/Film":0,
@@ -79,7 +79,7 @@ class NewDistFeatureMiner(MinerBase):
             "until": 0,
             "by": 0,
             "year": 0,
-            "s ec": 0
+            "sec": 0
         }
         self.pred_dict_counters = {
             "on": 0,

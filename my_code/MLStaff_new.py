@@ -14,6 +14,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit, train_test_split
 from new_dist_feature_miner import NewDistFeatureMiner
 from sklearn.ensemble import BaggingRegressor
+
 def create_training_data(th):
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
@@ -90,8 +91,6 @@ def create_training_data(th):
 
 def create_training_data_manual():
     classified_properties_dict = get_classified_prop_dict()
-
-
     for r in classified_properties_dict.items():
         print r
 

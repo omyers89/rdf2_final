@@ -8,11 +8,11 @@ DBPEDIA_URL_UP = "http://dbpedia.org/sparql"
 TODO:
 1. prepare training data and dump it.
     training data:
-    a. take filtered list from csv.
-    b. merge all relevant features by feature dictionary
-2. make function that create model with one feature family out.
-3. CV with 70/30 or 80/20
-4. print stats and confusion matrix.
+    a. take filtered list from csv. - V
+    b. merge all relevant features by feature dictionary - V
+2. make function that create model with one feature family out. - V
+3. CV with 70/30 or 80/20 - V
+4. print stats and confusion matrix. - V
 """
 
 def get_subj_objs_for_prop():
@@ -97,6 +97,8 @@ def load_features(classified_properies_dict):
         osf.pop('p_count', None)
         otf = prop_feature_dict[k]['p_type_counters'].copy()
         tpf = pred_feature_dict[k]['pred_dict_counters'].copy()
+        if 'http://dbpedia.org/ontology/NaturalEvent' in otf:
+            otf.pop('http://dbpedia.org/ontology/NaturalEvent',None)
         for t,f in otf.items():
             otf[t] = float(f)/pcount
         for p,ff in tpf.items():
@@ -109,10 +111,14 @@ def load_features(classified_properies_dict):
 def make_training_data():
     classified_properies_dict = get_classified_prop_dict()
     features_loaded = load_features(classified_properies_dict)
+    dump_name = "../dumps/training_set.dump"
+    r_dict_file = open(dump_name, 'w')
+    pickle.dump(features_loaded, r_dict_file)
+    r_dict_file.close()
+    return  features_loaded
 
 if __name__ == '__main__':
-    dic = get_classified_prop_dict()
-    features_loaded = load_features(dic)
+    features_loaded = make_training_data()
     i=0
     for k,v in features_loaded.items():
         print "i: %d, k: %s, v:" % (i,k,)
