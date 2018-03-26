@@ -51,6 +51,11 @@ def get_subj_objs_for_prop():
     csvfile1.close()
 
 def get_classified_prop_dict(file_suffix="dbo"):
+    '''
+
+    :param file_suffix: can be dbo, dbp,any
+    :return: a dictionary with the filtered list - with only good properties, and tagging
+    '''
     classified_properies_dict = {}
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
@@ -60,23 +65,58 @@ def get_classified_prop_dict(file_suffix="dbo"):
         for row in reader:
             if "tag" in row:
                 continue
+            if row[0] == "-1":
+                break
             #prob = float(row[1])
             tag = int(row[1])
             if tag == -1:
                 continue
-            if row[0] == "-1" :
-                break
+
             seg = 1
             classified_properies_dict[row[0]] = {'seg': seg, 'class': tag, 'obj_sat_f': {}, 'obj_type_f':{}, 'time_prep_f':{}}
     return classified_properies_dict
 
 
+def load_features(classified_properies_dict):
+    prop_dump_name = "../dumps/prop_features_dbo.dump"
+    prop_feature_dict_file = open(prop_dump_name, 'r')
+    prop_feature_dict = pickle.load(prop_feature_dict_file)
+    prop_feature_dict_file.close()
+    pred_dump_name = "../dumps/prop_features_pred.dump"
+    pred_feature_dict_file = open(pred_dump_name, 'r')
+    pred_feature_dict = pickle.load(pred_feature_dict_file)
+    pred_feature_dict_file.close()
+    for k,v in classified_properies_dict.items():
+        if (k not in prop_feature_dict) or (k not in pred_feature_dict):
+            continue
+        osf = prop_feature_dict[k].copy()
 
-
+        pcount = osf['p_count']
+        classified_properies_dict[k]['p_count'] = pcount
+        osf.pop('p_type_counters', None)
+        osf.pop('p_count', None)
+        otf = prop_feature_dict[k]['p_type_counters'].copy()
+        tpf = pred_feature_dict[k]['pred_dict_counters'].copy()
+        for t,f in otf.items():
+            otf[t] = float(f)/pcount
+        for p,ff in tpf.items():
+            tpf[p] = float(ff)/pcount
+        classified_properies_dict[k]['obj_sat_f'] = osf
+        classified_properies_dict[k]['obj_type_f'] = otf
+        classified_properies_dict[k]['time_prep_f'] = tpf
+    return classified_properies_dict
 
 def make_training_data():
     classified_properies_dict = get_classified_prop_dict()
-
+    features_loaded = load_features(classified_properies_dict)
 
 if __name__ == '__main__':
-    get_subj_objs_for_prop()
+    dic = get_classified_prop_dict()
+    features_loaded = load_features(dic)
+    i=0
+    for k,v in features_loaded.items():
+        print "i: %d, k: %s, v:" % (i,k,)
+        for kk, vv in v.items():
+            print kk,":", vv
+        i+=1
+
