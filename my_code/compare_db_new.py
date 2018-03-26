@@ -70,7 +70,7 @@ def t_comp(s, p, miner_up, miner_old):
 
     except:
 
-        print "Error in t_comp"
+        print "Error in t_comp, p is:",p
         sleep(2)
         return
     local_prop_dif_dict = {"diff": 0, "tot": 0, "miss": 0}
@@ -84,7 +84,12 @@ def t_comp(s, p, miner_up, miner_old):
         if not obj_ok(on):
             continue
         local_prop_dif_dict["tot"] = 1
-        if on not in clean_obj_list_old:
+        in_flag = False
+        for oo in clean_obj_list_old:
+            if on.lower() == oo.lower():
+                in_flag = True
+
+        if not in_flag:
             local_prop_dif_dict["diff"] = 1
             if DEBUG:
                 print "in t_comp, diff in s: ", s, "p is: ",p
@@ -99,13 +104,14 @@ def t_comp(s, p, miner_up, miner_old):
 
 def comp_small():
 
-    s_dict_file = open("../dumps/p_top_s_dict_dbp.dump", 'r')
+    s_dict_file = open("../dumps/p_top_s_dict_dbo.dump", 'r')
     p_top_s_dict = pickle.load(s_dict_file)
     s_dict_file.close()
 
     bdg_count=0
     for p, s_dict in p_top_s_dict.items():
         if p in prop_dif_dict and prop_dif_dict[p]['tot'] != 0:
+            print "in retry, continued, p is:", p, "s_dict len is:", len(s_dict)
             continue
         bdg_count += 1
 
@@ -118,7 +124,7 @@ def comp_small():
         if QUICK and bdg_count > 5:
             break
 
-    dump_name = "../dumps/diff_props_dbp_all.dump"
+    dump_name = "../dumps/diff_props_dbo_all.dump"
     p_dict_file = open(dump_name, 'w')
     pickle.dump(prop_dif_dict, p_dict_file)
     p_dict_file.close()
@@ -159,7 +165,7 @@ def comp_diff_for_prop(prop_uri,s_dict):
 
 def retry_from_dump():
     global prop_dif_dict
-    dump_name = "../dumps/diff_props_dbp_all.dump"
+    dump_name = "../dumps/diff_props_dbo_all.dump"
     p_dict_file = open(dump_name, 'r')
     prop_dif_dict = pickle.load(p_dict_file)
     p_dict_file.close()
@@ -177,18 +183,18 @@ def debug_get_diff_for_prop(p_uri):
     miner_up = MinerBase(DBPEDIA_URL_UP)
     miner_old = MinerBase(DBPEDIA_URL)
 
-    s_dict_file = open("../dumps/p_top_s_dict_dbp.dump", 'r')
+    s_dict_file = open("../dumps/p_top_s_dict_dbo.dump", 'r')
     p_top_s_dict = pickle.load(s_dict_file)
     s_dict_file.close()
     comp_diff_for_prop(p_uri, p_top_s_dict[p_uri])
 
 
 def print_diff_to_csv():
-    diff_dump_name = "../dumps/diff_props_dbp_all.dump"
+    diff_dump_name = "../dumps/diff_props_dbo_all.dump"
     diff_dict_file = open(diff_dump_name, 'r')
     p_diff_dict = pickle.load(diff_dict_file)
     diff_dict_file.close()
-    csvp_name = "../results/CSVS/diff_props_all.csv"
+    csvp_name = "../results/CSVS/diff_props_all_dbo.csv"
     with open(csvp_name, 'w') as csvfile2:
         fieldnames = ['uri', 'diff', 'tot', 'miss']
         writer = csv.DictWriter(csvfile2, fieldnames=fieldnames)
@@ -204,8 +210,10 @@ def print_diff_to_csv():
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         QUICK = True
-    #debug_get_diff_for_prop('http://dbpedia.org/property/spouse')
+    # comp_small()
+    # print_diff_to_csv()
+    # debug_get_diff_for_prop('http://dbpedia.org/property/spouse')
     # for k, v in prop_dif_dict.items():
     #     print k, v
-    retry_from_dump()
-    #print_diff_to_csv()
+    # retry_from_dump()
+    print_diff_to_csv()

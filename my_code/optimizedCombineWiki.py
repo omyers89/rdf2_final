@@ -136,7 +136,6 @@ class rel_wikiData_finder:
                 ?statement s:%s <%s> .
                 ?statement pq:P580 ?starttime.
                 OPTIONAL{?statement pq:P582 ?endtime.}
-                SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
             }""" % (w_subj, w_prop, w_prop, w_obj))
         sparql.setQuery(query_text)
         sparql.setReturnFormat(JSON)
@@ -227,6 +226,10 @@ class rel_wikiData_finder:
         return max_obj, max
 
     def auto_fix(self):
+        '''
+        read al violations from the csv after filtering
+        :return:
+        '''
         self.LOG('auto_fix')
         violation_dict = {}
         with codecs.open(self.inc_path, mode='r', encoding=None, errors='replace', buffering=1) as csvfile:

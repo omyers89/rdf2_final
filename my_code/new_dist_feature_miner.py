@@ -79,7 +79,7 @@ class NewDistFeatureMiner(MinerBase):
             "until": 0,
             "by": 0,
             "year": 0,
-            "sec": 0
+            "s ec": 0
         }
         self.pred_dict_counters = {
             "on": 0,
@@ -431,7 +431,7 @@ class NewDistFeatureMiner(MinerBase):
         feature_dict["pred_dict_counters"] = self.pred_dict_counters.copy()
         print "final"
         print self.p_count, ";", self.pred_dict_counters
-        return feature_dict
+        return
 
     def update_counter_pred(self, prop_uri, s):
         temp_red_res = get_time_prep_dict_for_sp(s,prop_uri)
@@ -475,6 +475,7 @@ def print_features_to_csv(file_suffix="dbo"):
                       "http://dbpedia.org/ontology/Country",
                       "http://dbpedia.org/ontology/ArchitecturalStructure",
                       "http://dbpedia.org/ontology/NaturalPlace",
+                      'http://dbpedia.org/ontology/NaturalEvent',
                       'p_count']
         writer = csv.DictWriter(csvfile2, fieldnames=fieldnames)
         writer.writeheader()
@@ -490,19 +491,60 @@ def print_features_to_csv(file_suffix="dbo"):
 
     csvfile2.close()
 
+
+def print_nlp_features_to_csv(file_suffix="pred"):
+    diff_dump_name = "../dumps/prop_features_" + file_suffix +".dump"
+    diff_dict_file = open(diff_dump_name, 'r')
+    p_feture_dict = pickle.load(diff_dict_file)
+    diff_dict_file.close()
+    csvp_name = "../results/CSVS/fetures_" + file_suffix +".csv"
+    with open(csvp_name, 'w') as csvfile2:
+        fieldnames = ['uri', "on",
+                                "in",
+                                "at",
+                                "since",
+                                "for",
+                                "ago",
+                                "before",
+                                "to",
+                                "past",
+                                "from",
+                                "till",
+                                "until",
+                                "by",
+                                "year",
+                                "sec",
+                                'p_count']
+        writer = csv.DictWriter(csvfile2, fieldnames=fieldnames)
+        writer.writeheader()
+        for p, c in p_feture_dict.items():
+            data = {}
+            p_uri = (p).encode('utf-8')
+            data['p_count'] = c['p_count']
+            data['uri'] = p_uri
+            for pp, vv in c['pred_dict_counters'].items():
+                data[pp] = vv
+            data.pop('p_type_counters', None)
+            writer.writerow(data)
+
+    csvfile2.close()
+
 if __name__ == "__main__":
     # this script will mine all features of all properties of person
-    if len(sys.argv) > 1:
-        quick_param = True
-    FM = NewDistFeatureMiner(DBPEDIA_URL_UP, 'person', "http://dbpedia.org/ontology/Person",file_suff="pred")
-    fd, missed = FM.mine_features_nlp(quick=quick_param)
-    if len(missed) > 0:
-        # try again:
-        fd, missed = FM.mine_features(quick=quick_param)
-
-    print "tried twice ps left:", missed
+    # if len(sys.argv) > 1:
+    #     quick_param = True
+    # FM = NewDistFeatureMiner(DBPEDIA_URL_UP, 'person', "http://dbpedia.org/ontology/Person",file_suff="pred")
+    # fd, missed = FM.mine_features_nlp(quick=quick_param)
+    # if len(missed) > 0:
+    #     # try again:
+    #     fd, missed = FM.mine_features(quick=quick_param)
+    #
+    # print "tried twice ps left:", missed
     #print_features_to_csv()
     #features = FM.get_fetures_for_prop(False, "http://dbpedia.org/ontology/spouse", 200)
     #print_features_to_csv()
 
     #time words:
+
+    # print_nlp_features_to_csv()
+    print_features_to_csv()

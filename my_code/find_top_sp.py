@@ -261,7 +261,7 @@ def get_all_top_of_dbp(uri = "http://dbpedia.org/ontology/Person"):
 
 
 def get_all_top_of_dbo(uri = "http://dbpedia.org/ontology/Person"):
-    # ** same as above just for DBP
+    # ** same as above just for DBO
     # CHECKED !
 
     print "in get_all_top_of_dbo:"
