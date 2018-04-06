@@ -15,6 +15,8 @@ TODO:
 4. print stats and confusion matrix. - V
 """
 
+
+
 def get_subj_objs_for_prop():
     s_dict_file = open("../dumps/p_top_s_dict_dbp.dump", 'r')
     p_top_s_dict = pickle.load(s_dict_file)
@@ -108,6 +110,16 @@ def load_features(classified_properies_dict):
         classified_properies_dict[k]['time_prep_f'] = tpf
     return classified_properies_dict
 
+
+# def normalize_features(features_loaded):
+#     for k, v in features_loaded.items():
+#         for fk, fv in v['obj_sat_f']:
+#             v['obj_sat_f'][fk]
+#
+#         classified_properies_dict[k]['obj_type_f'] = otf
+#         classified_properies_dict[k]['time_prep_f'] = tpf
+
+
 def make_training_data():
     classified_properies_dict = get_classified_prop_dict()
     features_loaded = load_features(classified_properies_dict)
@@ -116,6 +128,7 @@ def make_training_data():
     pickle.dump(features_loaded, r_dict_file)
     r_dict_file.close()
     return  features_loaded
+
 
 if __name__ == '__main__':
     features_loaded = make_training_data()

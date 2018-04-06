@@ -26,24 +26,24 @@ class NewDistFeatureMiner(MinerBase):
         self.p_objs_unique_type_counter = 0
         self.p_has_primitive_type = 0
         self.file_suffix = file_suff
-        self.feature_types_init = {"http://dbpedia.org/ontology/Person":0,
+        self.feature_types_init = { "http://dbpedia.org/ontology/Person":0,
                                     "http://dbpedia.org/ontology/Organisation":0,
                                     "http://dbpedia.org/ontology/Company":0,
                                     "http://dbpedia.org/ontology/SportsTeam":0,
                                     "http://dbpedia.org/ontology/EducationalInstitution":0,
                                     "http://dbpedia.org/ontology/PoliticalParty":0,
                                     "http://dbpedia.org/ontology/Work":0,
-                                   "http://dbpedia.org/ontology/Document":0,
-                                   "http://dbpedia.org/ontology/MusicalWork":0,
-                                   "http://dbpedia.org/ontology/Film":0,
-                                   "http://dbpedia.org/ontology/Event":0,
-                                   "http://dbpedia.org/ontology/SocietalEvent":0,
-                                   "http://dbpedia.org/ontology/Activity":0,
-                                   "http://dbpedia.org/ontology/Place":0,
-                                   "http://dbpedia.org/ontology/PopulatedPlace":0,
-                                   "http://dbpedia.org/ontology/Country":0,
-                                   "http://dbpedia.org/ontology/ArchitecturalStructure":0,
-                                   "http://dbpedia.org/ontology/NaturalPlace":0}
+                                    "http://dbpedia.org/ontology/Document":0,
+                                    "http://dbpedia.org/ontology/MusicalWork":0,
+                                    "http://dbpedia.org/ontology/Film":0,
+                                    "http://dbpedia.org/ontology/Event":0,
+                                    "http://dbpedia.org/ontology/SocietalEvent":0,
+                                    "http://dbpedia.org/ontology/Activity":0,
+                                    "http://dbpedia.org/ontology/Place":0,
+                                    "http://dbpedia.org/ontology/PopulatedPlace":0,
+                                    "http://dbpedia.org/ontology/Country":0,
+                                    "http://dbpedia.org/ontology/ArchitecturalStructure":0,
+                                    "http://dbpedia.org/ontology/NaturalPlace":0}
 
         self.p_type_counters = {"http://dbpedia.org/ontology/Person":0,
                                "http://dbpedia.org/ontology/Organisation":0,
